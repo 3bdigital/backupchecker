@@ -2,6 +2,11 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
+function storeSettings($settings) {
+	$settingsFile = 'backupcheckersettings.json';
+	file_put_contents($settingsFile, $settings);
+}
+
 function checkGmail($username, $password, $label = '') { 
 	$url = "https://mail.google.com/mail/feed/atom"; 
 
@@ -19,6 +24,27 @@ function checkGmail($username, $password, $label = '') {
 	curl_close($curl);
 
 	return $mailData;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	// store settings
+	$settings = array();
+	$settings['username'] = $_POST['username'];
+	$settings['password'] = $_POST['password'];
+	$settings['days'] = $_POST['days'];
+	$settings['nested'] = $_POST['nested'];
+	$settings['labels'] = array();
+
+	$labels = $_POST['labels'];
+	$titles = $_POST['titles'];
+
+	foreach($labels as $key => $value) {
+		$settings['labels'][] = array('label' => $value, 'title' => $titles[$key]);
+	}
+
+	$json = json_encode($settings);
+
+	storeSettings($json);
 }
 
 $username = ''; // google username
@@ -83,8 +109,9 @@ $clients = array(
     <title>Backup Checker</title>
 
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap.min.css" rel="stylesheet">
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css" rel="stylesheet">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
 
 	<style>
 		.glyphicon-ok {
@@ -94,6 +121,22 @@ $clients = array(
 			color: #b94a48;
 		}
 	</style>
+	<script type="text/javascript">
+		(function($){
+			$(document).ready(function(){
+				$('#toggle-settings').click(function(){
+					event.preventDefault();
+					$('#settings').toggleClass('hide');
+				});
+
+				$('#add-label').click(function(){
+					event.preventDefault();
+					var html = '<div class="row"><div class="col-lg-3"><div class="form-group"><input type="text" class="form-control" name="labels[]"></div></div><div class="col-lg-3"><div class="form-group"><input type="text" class="form-control" name="titles[]"></div></div></div>';
+					$('#labels').append(html);
+				});
+			});
+		})(jQuery);
+	</script>
   </head>
 
   <body>
@@ -103,7 +146,9 @@ $clients = array(
 
 		<h1>Backup Checker</h1>
 
-		<div class="well">
+		<p><button type="button" id="toggle-settings" class="btn btn-primary btn-xs">Toggle Settings</button></p>
+
+		<div id="settings" class="well hide">
 			<form role="form" action="" method="post">
 				<div class="row">
 					<div class="col-lg-3">
@@ -150,7 +195,7 @@ $clients = array(
 						</div>
 					</div>
 				</div>
-				<p><button type="submit" class="btn btn-xs btn-default">Add Label</button></p>
+				<p><button type="submit" id="add-label" class="btn btn-xs btn-default">Add Label</button></p>
 				<button type="submit" class="btn btn-default btn-success">Submit</button>
 			</form>
 		</div>
