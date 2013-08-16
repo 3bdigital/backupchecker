@@ -161,109 +161,113 @@ foreach($labels as $key => $value) {
 
     <div class="container">
 
-    	<?php if(!$check): ?>
-    	<br />
-		<div class="alert alert-danger">
-			<?php echo $msg; ?>
-		</div>
-    	<?php endif; ?>
+		<div class="row">
+			<div class="col-lg-12">
+		
 
-    	<?php if($success): ?>
-    	<br />
-		<div class="alert alert-success">
-			Settings saved
-		</div>
-    	<?php endif; ?>
-
-		<h1>Backup Checker</h1>
-
-		<p><button type="button" id="toggle-settings" class="btn btn-primary btn-xs">Toggle Settings</button></p>
-
-		<div id="settings" class="well hide">
-			<form role="form" action="" method="post">
-				<div class="row">
-					<div class="col-lg-3">
-						<div class="form-group">
-							<label for="username">Username</label>
-							<input type="text" class="form-control" name="username" id="username" placeholder="Enter username" value="<?php echo $username; ?>">
-							<span class="help-block">Your Gmail username or Google Apps email</span>
-						</div>
-					</div>
-					<div class="col-lg-3">
-						<div class="form-group">
-							<label for="password">Password</label>
-							<input type="password" class="form-control" name="password" id="password" placeholder="Enter password"  value="<?php echo $password; ?>">
-							<span class="help-block">Your Gmail or Google Apps password</span>
-						</div>
-					</div>
-					<div class="col-lg-3">
-						<div class="form-group">
-							<label for="password">Days</label>
-							<select class="form-control" name="days" id="days">
-								<?php for($i=1; $i<15; $i++): ?>
-								<option value="<?php echo $i; ?>"<?php if($i == $days) echo ' selected="selected"'; ?>><?php echo $i; ?></option>
-								<?php endfor; ?>
-							</select>
-							<span class="help-block">The number of days you would like to check</span>
-						</div>
-					</div>
-					<div class="col-lg-3">
-						<div class="form-group">
-							<label for="nested">Nested Labels</label>
-							<input type="text" class="form-control" name="nested" id="nested" placeholder="Enter nested label"  value="<?php echo $nestedLabel; ?>">
-							<span class="help-block">If you have nested labels enter the parent here e.g. the nested label backup/site1 would be backup. 
-								If you have multiple parents then separate with "-" e.g. backup-clients</span>
-						</div>
-					</div>
+		    	<?php if(!$check): ?>
+		    	<br />
+				<div class="alert alert-danger">
+					<?php echo $msg; ?>
 				</div>
-				<div class="row">
-					<div class="col-lg-3"><label>Labels</label></div>
-					<div class="col-lg-3"><label>Display Title</label></div>
+		    	<?php endif; ?>
+
+		    	<?php if($success): ?>
+		    	<br />
+				<div class="alert alert-success">
+					Settings saved
 				</div>
-				<span class="help-block">Add the labels with a title</span>
-				<div id="labels">
-					<?php foreach($labels as $label): ?>
-					<div class="row">
-						<div class="col-lg-3">
-							<div class="form-group">
-								<input type="text" class="form-control" name="labels[]" value="<?php echo $label->label; ?>">
+		    	<?php endif; ?>
+
+				<h1>Backup Checker</h1>
+
+				<p><button type="button" id="toggle-settings" class="btn btn-primary btn-xs">Toggle Settings</button></p>
+
+				<div id="settings" class="well hide">
+					<form role="form" action="" method="post">
+						<div class="row">
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label for="username">Username</label>
+									<input type="text" class="form-control" name="username" id="username" placeholder="Enter username" value="<?php echo $username; ?>">
+									<span class="help-block">Your Gmail username or Google Apps email</span>
+								</div>
+							</div>
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label for="password">Password</label>
+									<input type="password" class="form-control" name="password" id="password" placeholder="Enter password"  value="<?php echo $password; ?>">
+									<span class="help-block">Your Gmail or Google Apps password</span>
+								</div>
+							</div>
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label for="password">Days</label>
+									<select class="form-control" name="days" id="days">
+										<?php for($i=1; $i<15; $i++): ?>
+										<option value="<?php echo $i; ?>"<?php if($i == $days) echo ' selected="selected"'; ?>><?php echo $i; ?></option>
+										<?php endfor; ?>
+									</select>
+									<span class="help-block">The number of days you would like to check</span>
+								</div>
+							</div>
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label for="nested">Nested Labels</label>
+									<input type="text" class="form-control" name="nested" id="nested" placeholder="Enter nested label"  value="<?php echo $nestedLabel; ?>">
+									<span class="help-block">If you have nested labels enter the parent here e.g. the nested label backup/site1 would be backup. 
+										If you have multiple parents then separate with "-" e.g. backup-clients</span>
+								</div>
 							</div>
 						</div>
-						<div class="col-lg-3">
-							<div class="form-group">
-								<input type="text" class="form-control" name="titles[]" value="<?php echo $label->title; ?>">
-							</div>
+						<div class="row">
+							<div class="col-lg-3"><label>Labels</label></div>
+							<div class="col-lg-3"><label>Display Title</label></div>
 						</div>
-					</div>
-					<?php endforeach; ?>
+						<span class="help-block">Add the labels with a title</span>
+						<div id="labels">
+							<?php foreach($labels as $label): ?>
+							<div class="row">
+								<div class="col-lg-3">
+									<div class="form-group">
+										<input type="text" class="form-control" name="labels[]" value="<?php echo $label->label; ?>">
+									</div>
+								</div>
+								<div class="col-lg-3">
+									<div class="form-group">
+										<input type="text" class="form-control" name="titles[]" value="<?php echo $label->title; ?>">
+									</div>
+								</div>
+							</div>
+							<?php endforeach; ?>
+						</div>
+						<p><button type="submit" id="add-label" class="btn btn-xs btn-default">Add Label</button></p>
+						<button type="submit" class="btn btn-default btn-success">Submit</button>
+					</form>
 				</div>
-				<p><button type="submit" id="add-label" class="btn btn-xs btn-default">Add Label</button></p>
-				<button type="submit" class="btn btn-default btn-success">Submit</button>
-			</form>
-		</div>
 
-      	<table class="table">
-	        <thead>
-	          <tr>
-	            <th>#</th>
-	            <th>Client</th>
-	            <? for ($i=0; $i<$days; $i++): ?>
-	            <th><?php echo date('j M', strtotime('-' . $i .' days')); ?></th>
-	            <?php endfor; ?>
-	          </tr>
-	        </thead>
-	        <tbody>
-	          <?php foreach($labels as $label): ?>
-	          <tr>
-	            <td width="5%">1</td>
-	            <td width="25%"><?php echo $label->title; ?></td>
-	            <? for ($i=0; $i<$days; $i++): ?>
-				<td width="<?php echo (70 / $days)  ?>%"><span class="glyphicon glyphicon-<?php echo (isset($label->success[$i])) ? 'ok' : 'remove' ?>"></span></td>
-				<?php endfor; ?>
-	          </tr>
-	          <?php endforeach; ?>
-	        </tbody>
-      	</table>
+		      	<table class="table">
+			        <thead>
+			          <tr>
+			            <th>Client</th>
+			            <? for ($i=0; $i<$days; $i++): ?>
+			            <th><?php echo date('j M', strtotime('-' . $i .' days')); ?></th>
+			            <?php endfor; ?>
+			          </tr>
+			        </thead>
+			        <tbody>
+			          <?php foreach($labels as $label): ?>
+			          <tr>
+			            <td width="20%"><?php echo $label->title; ?></td>
+			            <? for ($i=0; $i<$days; $i++): ?>
+						<td width="<?php echo (80 / $days)  ?>%"><span class="glyphicon glyphicon-<?php echo (isset($label->success[$i])) ? 'ok' : 'remove' ?>"></span></td>
+						<?php endfor; ?>
+			          </tr>
+			          <?php endforeach; ?>
+			        </tbody>
+		      	</table>
+			</div>
+    	</div>
 
     </div><!-- /.container -->
   </body>
