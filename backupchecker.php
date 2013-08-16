@@ -186,7 +186,7 @@ foreach($labels as $key => $value) {
 						<div class="form-group">
 							<label for="username">Username</label>
 							<input type="text" class="form-control" name="username" id="username" placeholder="Enter username" value="<?php echo $username; ?>">
-							<span class="help-block">Your Gmail or Google Apps username</span>
+							<span class="help-block">Your Gmail username or Google Apps email</span>
 						</div>
 					</div>
 					<div class="col-lg-3">
@@ -204,19 +204,22 @@ foreach($labels as $key => $value) {
 								<option value="<?php echo $i; ?>"<?php if($i == $days) echo ' selected="selected"'; ?>><?php echo $i; ?></option>
 								<?php endfor; ?>
 							</select>
-							<span class="help-block">The amount of days you would like to check</span>
+							<span class="help-block">The number of days you would like to check</span>
 						</div>
 					</div>
 					<div class="col-lg-3">
 						<div class="form-group">
 							<label for="nested">Nested Labels</label>
 							<input type="text" class="form-control" name="nested" id="nested" placeholder="Enter nested label"  value="<?php echo $nestedLabel; ?>">
-							<span class="help-block">If you have nested labels enter the parent here e.g. the nested label backup/parent would be backup. 
+							<span class="help-block">If you have nested labels enter the parent here e.g. the nested label backup/site1 would be backup. 
 								If you have multiple parents then separate with "-" e.g. backup-clients</span>
 						</div>
 					</div>
 				</div>
-				<label>Labels (add Titles)</label>
+				<div class="row">
+					<div class="col-lg-3"><label>Labels</label></div>
+					<div class="col-lg-3"><label>Display Title</label></div>
+				</div>
 				<span class="help-block">Add the labels with a title</span>
 				<div id="labels">
 					<?php foreach($labels as $label): ?>
