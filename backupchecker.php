@@ -181,7 +181,10 @@ foreach($labels as $key => $value) {
 
 				<h1>Backup Checker</h1>
 
-				<p><button type="button" id="toggle-settings" class="btn btn-primary btn-xs">Toggle Settings</button></p>
+				<p>
+					<button type="button" id="toggle-settings" class="btn btn-primary btn-xs">Toggle Settings</button>
+					<a href="" class="btn btn-default btn-xs">Reload</a>
+				</p>
 
 				<div id="settings" class="well hide">
 					<form role="form" action="" method="post">
