@@ -3,6 +3,7 @@ ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
 function loadSettings($file) {
+	if(!file_exists($file)) return array();
 	$data = file_get_contents($file);
 	if(!$data) return array();
 	$json = json_decode($data);
@@ -34,6 +35,8 @@ function checkGmail($username, $password, $label = '') {
 
 $settingsFile = 'backupcheckersettings.json';
 
+$success = false;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// store settings
 	$settings = array();
@@ -53,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$json = json_encode($settings);
 
 	storeSettings($json, $settingsFile);
+
+	$success = true;
 }
 
 $settings = loadSettings($settingsFile);
@@ -73,8 +78,8 @@ if(empty($username) || empty($password) || empty($days) || empty($nestedLabel)) 
 
 // process the clients rss
 foreach($labels as $key => $value) {
-	$label = $key;
-	if($nestedLabel) $label = $nestedLabel . $label;
+	$label = $value->label;
+	if($nestedLabel) $label = $nestedLabel . '-' . $label;
 	$feed = checkGmail($username, $password, $label);
 	$xml = new SimpleXMLElement($feed);
 
@@ -97,7 +102,7 @@ foreach($labels as $key => $value) {
 					// compare the dates
 					$diff = $today->getTimestamp() - $emailDate->getTimestamp();
 					// if the difference is less than 24 hours then a backup has been run for that day
-					if($diff < $maxTime) $clients[$key]['success'][$i] = true;
+					if($diff < $maxTime) $labels[$key]->success[$i] = true;
 				}
 			}
 
@@ -157,8 +162,16 @@ foreach($labels as $key => $value) {
     <div class="container">
 
     	<?php if(!$check): ?>
+    	<br />
 		<div class="alert alert-danger">
 			<?php echo $msg; ?>
+		</div>
+    	<?php endif; ?>
+
+    	<?php if($success): ?>
+    	<br />
+		<div class="alert alert-success">
+			Settings saved
 		</div>
     	<?php endif; ?>
 
@@ -172,13 +185,15 @@ foreach($labels as $key => $value) {
 					<div class="col-lg-3">
 						<div class="form-group">
 							<label for="username">Username</label>
-							<input type="text" class="form-control" name="username" id="username" placeholder="Enter username" value="<?php echo $settings->username; ?>">
+							<input type="text" class="form-control" name="username" id="username" placeholder="Enter username" value="<?php echo $username; ?>">
+							<span class="help-block">Your Gmail or Google Apps username</span>
 						</div>
 					</div>
 					<div class="col-lg-3">
 						<div class="form-group">
 							<label for="password">Password</label>
-							<input type="text" class="form-control" name="password" id="password" placeholder="Enter password"  value="<?php echo $settings->password; ?>">
+							<input type="password" class="form-control" name="password" id="password" placeholder="Enter password"  value="<?php echo $password; ?>">
+							<span class="help-block">Your Gmail or Google Apps password</span>
 						</div>
 					</div>
 					<div class="col-lg-3">
@@ -186,21 +201,25 @@ foreach($labels as $key => $value) {
 							<label for="password">Days</label>
 							<select class="form-control" name="days" id="days">
 								<?php for($i=1; $i<15; $i++): ?>
-								<option value="<?php echo $i; ?>"<?php if($i == $settings->days) echo ' selected="selected"'; ?>><?php echo $i; ?></option>
+								<option value="<?php echo $i; ?>"<?php if($i == $days) echo ' selected="selected"'; ?>><?php echo $i; ?></option>
 								<?php endfor; ?>
 							</select>
+							<span class="help-block">The amount of days you would like to check</span>
 						</div>
 					</div>
 					<div class="col-lg-3">
 						<div class="form-group">
 							<label for="nested">Nested Labels</label>
-							<input type="text" class="form-control" name="nested" id="nested" placeholder="Enter nested label"  value="<?php echo $settings->nested; ?>">
+							<input type="text" class="form-control" name="nested" id="nested" placeholder="Enter nested label"  value="<?php echo $nestedLabel; ?>">
+							<span class="help-block">If you have nested labels enter the parent here e.g. the nested label backup/parent would be backup. 
+								If you have multiple parents then separate with "-" e.g. backup-clients</span>
 						</div>
 					</div>
 				</div>
-				<label>Labels</label>
+				<label>Labels (add Titles)</label>
+				<span class="help-block">Add the labels with a title</span>
 				<div id="labels">
-					<?php foreach($settings->labels as $label): ?>
+					<?php foreach($labels as $label): ?>
 					<div class="row">
 						<div class="col-lg-3">
 							<div class="form-group">
@@ -226,7 +245,7 @@ foreach($labels as $key => $value) {
 	            <th>#</th>
 	            <th>Client</th>
 	            <? for ($i=0; $i<$days; $i++): ?>
-	            <th><?php echo date('d-m-Y', strtotime('-' . $i .' days')); ?></th>
+	            <th><?php echo date('j M', strtotime('-' . $i .' days')); ?></th>
 	            <?php endfor; ?>
 	          </tr>
 	        </thead>
@@ -236,7 +255,7 @@ foreach($labels as $key => $value) {
 	            <td width="5%">1</td>
 	            <td width="25%"><?php echo $label->title; ?></td>
 	            <? for ($i=0; $i<$days; $i++): ?>
-				<td width="10%"><span class="glyphicon glyphicon-<?php echo (isset($client['success'][$i])) ? 'ok' : 'remove' ?>"></span></td>
+				<td width="<?php echo (70 / $days)  ?>%"><span class="glyphicon glyphicon-<?php echo (isset($label->success[$i])) ? 'ok' : 'remove' ?>"></span></td>
 				<?php endfor; ?>
 	          </tr>
 	          <?php endforeach; ?>
