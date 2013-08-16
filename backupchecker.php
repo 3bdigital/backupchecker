@@ -38,38 +38,38 @@ $clients = array(
 );
 
 // process the clients rss
-foreach($clients as $key => $value) {
-	$label = $key;
-	if($nestedLabel) $label = $nestedLabel . $label;
-	$feed = checkGmail($username, $password, $label);
-	$xml = new SimpleXMLElement($feed);
+// foreach($clients as $key => $value) {
+// 	$label = $key;
+// 	if($nestedLabel) $label = $nestedLabel . $label;
+// 	$feed = checkGmail($username, $password, $label);
+// 	$xml = new SimpleXMLElement($feed);
 
-	// check for valid XML
-	if($xml) {
-		// make sure there is some emails
-		if($xml->fullcount > 0) {
-			// grab all the email entries
-			$entries = $xml->entry;
-			// today at midnight
-			$today = new DateTime(date('Y-m-d') . ' 23:59:59');
-			$maxTime = 86400; // 24 hours in seconds
-			for($i=0; $i<$days; $i++) {
-				if(isset($entries[$i])) {
-					$entry = $entries[$i];
-					// move the base date
-					$today->modify('-' . $i . ' days');
-					// get the email date
-					$emailDate = new DateTime($entry->issued);
-					// compare the dates
-					$diff = $today->getTimestamp() - $emailDate->getTimestamp();
-					// if the difference is less than 24 hours then a backup has been run for that day
-					if($diff < $maxTime) $clients[$key]['success'][$i] = true;
-				}
-			}
+// 	// check for valid XML
+// 	if($xml) {
+// 		// make sure there is some emails
+// 		if($xml->fullcount > 0) {
+// 			// grab all the email entries
+// 			$entries = $xml->entry;
+// 			// today at midnight
+// 			$today = new DateTime(date('Y-m-d') . ' 23:59:59');
+// 			$maxTime = 86400; // 24 hours in seconds
+// 			for($i=0; $i<$days; $i++) {
+// 				if(isset($entries[$i])) {
+// 					$entry = $entries[$i];
+// 					// move the base date
+// 					$today->modify('-' . $i . ' days');
+// 					// get the email date
+// 					$emailDate = new DateTime($entry->issued);
+// 					// compare the dates
+// 					$diff = $today->getTimestamp() - $emailDate->getTimestamp();
+// 					// if the difference is less than 24 hours then a backup has been run for that day
+// 					if($diff < $maxTime) $clients[$key]['success'][$i] = true;
+// 				}
+// 			}
 
-		}
-	}
-}
+// 		}
+// 	}
+// }
 
 ?>
 <!DOCTYPE html>
@@ -82,10 +82,8 @@ foreach($clients as $key => $value) {
 
     <title>Backup Checker</title>
 
-   	<!-- Latest compiled and minified CSS -->
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap.min.css" rel="stylesheet">
-	 
-	<!-- Latest Glyphicons minified CSS -->
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css" rel="stylesheet">
 
 	<style>
@@ -104,6 +102,58 @@ foreach($clients as $key => $value) {
     <div class="container">
 
 		<h1>Backup Checker</h1>
+
+		<div class="well">
+			<form role="form" action="" method="post">
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="form-group">
+							<label for="username">Username</label>
+							<input type="text" class="form-control" name="username" id="username" placeholder="Enter username">
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="text" class="form-control" name="password" id="password" placeholder="Enter password">
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<label for="password">Days</label>
+							<select class="form-control" name="days" id="days">
+								<?php for($i=1; $i<15; $i++): ?>
+								<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+								<?php endfor; ?>
+							</select>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="form-group">
+							<label for="nested">Nested Labels</label>
+							<input type="text" class="form-control" name="nested" id="nested" placeholder="Enter nested label">
+						</div>
+					</div>
+				</div>
+				<label>Labels</label>
+				<div id="labels">
+					<div class="row">
+						<div class="col-lg-3">
+							<div class="form-group">
+								<input type="text" class="form-control" name="labels[]">
+							</div>
+						</div>
+						<div class="col-lg-3">
+							<div class="form-group">
+								<input type="text" class="form-control" name="titles[]">
+							</div>
+						</div>
+					</div>
+				</div>
+				<p><button type="submit" class="btn btn-xs btn-default">Add Label</button></p>
+				<button type="submit" class="btn btn-default btn-success">Submit</button>
+			</form>
+		</div>
 
       	<table class="table">
 	        <thead>
